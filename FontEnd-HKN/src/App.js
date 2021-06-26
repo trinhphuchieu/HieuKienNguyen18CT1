@@ -5,16 +5,19 @@ import 'antd/dist/antd.css';
 import{
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link,
+
+  Route 
 } from "react-router-dom"
 import TrangChu from './pages/TrangChu';
+
 function App() {
+
   return (
    <Router>
      <Switch>
+     
        <Route path = "/trangchu">
-         <TrangChu/>
+       <TrangChu/>
        </Route>
      </Switch>
    </Router>
