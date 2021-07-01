@@ -1,16 +1,8 @@
 import React, { useState, useEffect,setState} from "react";
 import { Table, Button, Row, Col } from "antd";
 import axios from "axios";
-const apiURL = "http://localhost:5000"
+import {Link,Route,Switch} from 'react-router-dom';
 
-axios
-    .get(apiURL)
-        .then((response) => {
-            setState(response.message);
-        })
-    .catch((error) => {
-        console.log(error);
-    });
 const getTheSVAPI = () => {
     const url = "http://localhost:5000/api/danhsachtsv";
     return axios.get(url);
@@ -20,15 +12,17 @@ const getTheSVAPI = () => {
 function FormUp() {
     
     const [listSV, setListSV] = useState([]);
+    
   async function getSV() {
     try {
       const result = await getTheSVAPI();
       if (result.status === 200) {
         const datas = result.data.map((item) => ({
           ...item,
-          key: item.mssv,
+          key: item.id,
         }));
         setListSV(datas);
+        
       }
     } catch (e) {
       console.log("Request lỗi: ", e);
@@ -36,8 +30,7 @@ function FormUp() {
   }
   useEffect(() => {
     getSV();
-    
-  }, [listSV]);
+  },[]);
 const columns = [
     {
       title: "Mã Sinh Viên",
@@ -88,19 +81,21 @@ const columns = [
       title: "",
       key: "UpdateAction",
       render: (text, record) => (
+       
         <Button
-          onClick={() => onUpdate(record.mssv)}
+          onClick={() => onUpdate(record.id)}
           type="primary"
           
         >
-          Cập Nhật
+         <Link to ={"/trangchu/capnhattsv/"+record.id} >Cập Nhật</Link>
         </Button>
       ),
     },
     
 ];
+//onUpdate(record.mssv)
 function onUpdate(id){
-
+  return 
 }
 
     return (

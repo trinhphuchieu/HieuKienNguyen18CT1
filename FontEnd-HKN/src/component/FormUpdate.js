@@ -1,4 +1,4 @@
-import React, { setState }  from 'react'
+import React, { useState,useEffect }  from 'react'
 import {
     Form,
     Input,
@@ -9,26 +9,53 @@ import {
     DatePicker
   } from 'antd';
 import '../StyleForm.css';
+import {
+    BrowserRouter as Router,
+    useParams
+} from "react-router-dom";
+  
 import axios from "axios";
-const apiURL = "http://localhost:5000"
 
-axios
-    .get(apiURL)
-        .then((response) => {
-            setState(response.message);
-        })
-    .catch((error) => {
-        console.log(error);
-    });
-const postTheSVAPI = (data) => {
-  const url = "http://localhost:5000/api/themtsv";
-  return axios.post(url,data);
-};
 
 function FormUpdate() {
+    const getTheSVAPI = () => { 
+        const url = "http://localhost:5000/api/capnhattsv/"+id;
+        return axios.get(url);
+      };
+    const { id } = useParams()
+
+    const [listSV, setListSV] = useState([]);
+  
+    const [form] = Form.useForm();
+
+    //---------set value 
+    form.setFieldsValue({mssv: listSV.map(list => list.mssv)});
+    form.setFieldsValue({ten: listSV.map(list => list.ten)});
+    
+    
+      async function getSV() {
+        try {
+          const result = await getTheSVAPI();
+          if (result.status === 200) {
+            const datas = result.data.map((item) => ({
+              ...item,
+              key: item.id,
+            }));
+            setListSV(datas);
+    
+          }
+        } catch (e) {
+          console.log("Request lỗi: ", e);
+        }
+      }
+      useEffect(() => {
+        getSV();
+        
+      },[]);
+      //{listSV.map(list => list.mssv)} lấy giá trị trong list
     // UPPPLOADIMAGE------------------
     const [file, setFile] = React.useState("");
-
+    
     // Handles file upload event and updates state
     function handleUpload(event) {
       setFile(event.target.files[0]);
@@ -36,6 +63,7 @@ function FormUpdate() {
       // Add code here to upload file to server
       // ...
     }
+  
     const ImageThumb = ({ image }) => {
         return <img className="image-upload" src={URL.createObjectURL(image)} alt={image.name} />;
       };
@@ -72,18 +100,22 @@ function FormUpdate() {
           'khoahoc': rangeValue[0].format('YYYY') +"-"+ rangeValue[1].format('YYYY')
         };
         console.log('Received values of form: ', values);
+        /*
         const payload = new FormData();
         Object.keys(values).forEach((key) => {
           payload.append(key, values[key]);
         });
         postTheSVAPI(payload);
-      };
+    */  
+    };
     return (
         <div>
+            
             <div style={{boder:"3vh-solid-green",padding:"3px",height:"10vh"}}>
-            <Title level={2} style={{marginLeft:"30vh"}}>CẬP NHẬT THẺ</Title>
+            <Title level={2} style={{marginLeft:"30vh"}}>CẬP NHẬT THẺ{id}</Title>
             </div>
             <Form
+            form={form} 
             enctype="multipart/form-data"
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 10}}
@@ -101,9 +133,9 @@ function FormUpdate() {
           <Input />
         </Form.Item>
         <Form.Item label="Giới Tính" name="gioitinh">
-            <Radio.Group >
-                <Radio value="Nam">Nam</Radio>
-                 <Radio value="Nữ">Nữ</Radio>
+            <Radio.Group defaultValue={""+listSV.map(list => list.gioitinh)+""}>
+                <Radio value={"Nam"}>Nam</Radio>
+                 <Radio value={"Nữ"}>Nữ</Radio>
             </Radio.Group>
         </Form.Item>
         <Form.Item name="ngaysinh" label="Ngày Sinh:" {...config}>

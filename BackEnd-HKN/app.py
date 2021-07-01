@@ -67,13 +67,10 @@ def CapNhatThe(id):
 
     if request.method == 'GET':
         TheSV_Actions = TheSVActions(connect_data)
-        result,status_code = TheSV_Actions.XemTheoID(id)
-     
-        if status_code==200:
-            return jsonify(result.serialize()),status_code
-        return jsonify({
-            'message':result
-        }),status_code
+        result= TheSV_Actions.XemTheoID(id)
+        ketqua= []
+        ketqua.append(result.serialize())
+        return jsonify(ketqua)
 
     elif request.method=='PUT':   
         body =request.json

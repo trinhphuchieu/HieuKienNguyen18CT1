@@ -102,4 +102,4 @@ class TheSVActions:
                 khoahoc= row[8],
                 hinhanh = row[9]
             )
-        return thesv,200
+        return thesv

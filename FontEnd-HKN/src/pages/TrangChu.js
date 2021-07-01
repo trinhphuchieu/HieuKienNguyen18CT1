@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {  } from 'react'
 import { Layout, Menu} from 'antd';
 import FormLogin from '../component/FormLogin';
 import FormAdd from '../component/FormAdd';
@@ -74,7 +74,7 @@ function TrangChu() {
           padding:"0",
         }}> 
           <Switch>
-          <Route path={`${url}/capnhattsv`}><FormUpdate/></Route> 
+          <Route path={`${url}/capnhattsv/:id`}><FormUpdate/></Route> 
           <Route path={`${url}/dangky`}><FormRegister/></Route> 
           <Route path={`${url}/dangnhap`}><FormLogin/></Route>  
           <Route path={`${url}/danhsachtsv`}><FormShow/></Route> 
