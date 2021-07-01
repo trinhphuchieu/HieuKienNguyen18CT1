@@ -1,7 +1,7 @@
 
 import './App.css';
 import 'antd/dist/antd.css'; 
-
+import axios from "axios";
 import{
   BrowserRouter as Router,
   Switch,

@@ -25,7 +25,7 @@ const postTheSVAPI = (data) => {
   return axios.post(url,data);
 };
 
-function FormAdd() {
+function FormUpdate() {
     // UPPPLOADIMAGE------------------
     const [file, setFile] = React.useState("");
 
@@ -81,7 +81,7 @@ function FormAdd() {
     return (
         <div>
             <div style={{boder:"3vh-solid-green",padding:"3px",height:"10vh"}}>
-            <Title level={2} style={{marginLeft:"30vh"}}>THÊM THẺ SINH VIÊN</Title>
+            <Title level={2} style={{marginLeft:"30vh"}}>CẬP NHẬT THẺ</Title>
             </div>
             <Form
             enctype="multipart/form-data"
@@ -152,4 +152,4 @@ function FormAdd() {
     )
 }
 
-export default FormAdd;
+export default FormUpdate;
