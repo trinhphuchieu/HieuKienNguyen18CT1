@@ -35,7 +35,7 @@ function TrangChu() {
     <Router>
      < Switch>
     <div>    
-      <Layout style={{ minHeight: '100vh' }}>
+      <Layout style={{ minHeight: '140vh' }}>
         <Sider >
           <div className="logo" />
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">

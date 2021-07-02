@@ -3,11 +3,12 @@ from flask import Flask,json
 from flask import jsonify
 from flask import request
 from flask.helpers import make_response
+from flask.helpers import send_file
 from flask_cors import CORS
 import sqlite3
 from .actions.TheSV_actions import TheSVActions
 from .models.TheSV_models import TheSV
-
+from time import time
 #  flask và sqlite
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -32,6 +33,9 @@ def DanhSachThe():
 #-------------------- Danh Sach Thẻ -------------------------------------
 @app.route('/api/themtsv',methods=['POST'])
 def NhanThe(): 
+    hinhanh = request.files['hinhanh']
+    filename = str(int(time()))+'.jpg'
+    hinhanh.save(f'uploads/{filename}')
     mssv = request.form['mssv']
     ten = request.form['ten']
     gioitinh = request.form['gioitinh']
@@ -40,8 +44,7 @@ def NhanThe():
     nganh = request.form['nganh']
     khoa = request.form['khoa']
     khoahoc = request.form['khoahoc']
-    hinhanh = request.form['hinhanh']
-    thesv = TheSV(mssv= mssv,ten=ten,gioitinh=gioitinh,ngaysinh=ngaysinh,lop=lop,nganh=nganh,khoa=khoa,khoahoc=khoahoc,hinhanh=hinhanh)
+    thesv = TheSV(mssv= mssv,ten=ten,gioitinh=gioitinh,ngaysinh=ngaysinh,lop=lop,nganh=nganh,khoa=khoa,khoahoc=khoahoc,hinhanh=filename)
     TheSV_Actions = TheSVActions(connect_data)
     result = TheSV_Actions.ThemTheSV(thesv)
     
@@ -72,17 +75,18 @@ def CapNhatThe(id):
         ketqua.append(result.serialize())
         return jsonify(ketqua)
 
-    elif request.method=='PUT':   
-        body =request.json
-        ten = body.get('ten','')
-        gioitinh = body.get('gioitinh','')
-        ngaysinh = body.get('ngaysinh','')
-        lop = body.get('lop','')
-        nganh = body.get('nganh','')
-        khoa = body.get('khoa','')
-        khoahoc = body.get('khoahoc','')
-        hinhanh = body.get('hinhanh','')
-        thesv = TheSV(ten=ten,gioitinh=gioitinh,ngaysinh=ngaysinh,lop=lop,nganh=nganh,khoa=khoa,khoahoc=khoahoc,hinhanh=hinhanh)
+    elif request.method=='PUT':        
+        ten = request.form['ten']
+        gioitinh = request.form['gioitinh']
+        ngaysinh = request.form['ngaysinh']
+        lop = request.form['lop']
+        nganh = request.form['nganh']
+        khoa = request.form['khoa']
+        khoahoc = request.form['khoahoc']
+        hinhanh = request.files['hinhanh']
+        filename = str(int(time()))+'.jpg'
+        hinhanh.save(f'uploads/{filename}')
+        thesv = TheSV(ten=ten,gioitinh=gioitinh,ngaysinh=ngaysinh,lop=lop,nganh=nganh,khoa=khoa,khoahoc=khoahoc,hinhanh=filename)
         TheSV_Actions = TheSVActions(connect_data)
         message = TheSV_Actions.CapNhatTheSV(id,thesv)   
         response = make_response(jsonify({"message":"success"}),201)

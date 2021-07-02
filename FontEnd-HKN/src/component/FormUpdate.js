@@ -9,30 +9,68 @@ import {
     DatePicker
   } from 'antd';
 import '../StyleForm.css';
+import moment from 'moment';
 import {
     BrowserRouter as Router,
     useParams
 } from "react-router-dom";
-  
-import axios from "axios";
+   
+import axios from "axios"; 
 
 
 function FormUpdate() {
-    const getTheSVAPI = () => { 
-        const url = "http://localhost:5000/api/capnhattsv/"+id;
-        return axios.get(url);
-      };
-    const { id } = useParams()
-
-    const [listSV, setListSV] = useState([]);
   
+  const { id } = useParams()
+  const getTheSVAPI = () => { 
+    const url = "http://localhost:5000/api/capnhattsv/"+id;
+    return axios.get(url);
+  };
+  const putTheSVAPI = (data) => {
+    const url = "http://localhost:5000/api/capnhattsv/"+id;
+    return axios.put(url,data);
+  };
+    const [listSV, setListSV] = useState([]);
     const [form] = Form.useForm();
+    
+    //--------- SET VALUE CHO FORM
 
-    //---------set value 
+    
+    // so la []
+    // chu la [""]
+    let keyform = JSON. stringify(listSV.map(list => list.id));
+    keyform = keyform.slice(1,-1)
+    
+    let gt= JSON. stringify(listSV.map(list => list.gioitinh));
+    gt = gt.slice(2,-2)
+    let nganhhoc= JSON. stringify(listSV.map(list => list.nganh));
+    nganhhoc = nganhhoc.slice(2,-2)
+    let khoa = JSON. stringify(listSV.map(list => list.khoa));
+    khoa = khoa.slice(2,-2)
+    let ngaysinh = JSON. stringify(listSV.map(list => list.ngaysinh));
+    ngaysinh = ngaysinh.slice(2,-2)
+    let khoahoc1 = JSON. stringify(listSV.map(list => list.khoahoc));
+    khoahoc1 = khoahoc1.slice(2,-2)
+    let lop1 = JSON. stringify(listSV.map(list => list.lop));
+    lop1 = lop1.slice(2,-2)
+    let ten1 = JSON. stringify(listSV.map(list => list.ten));
+    ten1 = ten1.slice(2,-2)
+    const khoahoc2= khoahoc1.split("-")
     form.setFieldsValue({mssv: listSV.map(list => list.mssv)});
-    form.setFieldsValue({ten: listSV.map(list => list.ten)});
+    form.setFieldsValue({ten: ten1});
+    form.setFieldsValue({lop: lop1}); 
+    const dateFormat1 = 'YYYY';
+    const dateFormat = 'DD/MM/YYYY'; 
+    //-------------------------------mac dinh gia tri
     
-    
+    form.setFieldsValue({
+      'gioitinh': "Nam",
+      'nganh': nganhhoc,
+      'ngaysinh': moment(ngaysinh,dateFormat),
+      'khoahoc': [moment(khoahoc2[0],dateFormat1),moment(khoahoc2[1],dateFormat1)]
+    })
+  
+    //{[moment(khoahoc2[0], dateFormat1), moment(khoahoc2[1], dateFormat1)]}
+    //--------------Lấy dữ liệu API-----------------------------
       async function getSV() {
         try {
           const result = await getTheSVAPI();
@@ -40,7 +78,9 @@ function FormUpdate() {
             const datas = result.data.map((item) => ({
               ...item,
               key: item.id,
+             
             }));
+            
             setListSV(datas);
     
           }
@@ -50,8 +90,12 @@ function FormUpdate() {
       }
       useEffect(() => {
         getSV();
-        
+        macdinhForm(); 
       },[]);
+      
+     
+      
+      
       //{listSV.map(list => list.mssv)} lấy giá trị trong list
     // UPPPLOADIMAGE------------------
     const [file, setFile] = React.useState("");
@@ -67,13 +111,13 @@ function FormUpdate() {
     const ImageThumb = ({ image }) => {
         return <img className="image-upload" src={URL.createObjectURL(image)} alt={image.name} />;
       };
-    //------------------------------------END
+    //------------------------------------format form giao diện
     const config = {
         rules: [
           {
             type: 'object',
-            required: true,
-            message: 'Bạn chưa Chọn Ngày sinh!',
+            required: false,
+    
           },
         ],
       };
@@ -81,107 +125,123 @@ function FormUpdate() {
         rules: [
           {
             type: 'array',
-            required: true,
-            message: 'Bạn Chưa Chọn Khóa!',
+            required: false,   
           },
         ],
       };
+  
+    
+      //{"\""+listSV.map(list => list.gioitinh)+"\""}
     const {Title} = Typography;
     const { RangePicker } = DatePicker;
-    const onFinish = (fieldsValue) => {
+
+    // form cần key
+    const macdinhForm = () =>{
+      
+      const onFinish = (fieldsValue) => {
         const rangeValue = fieldsValue['khoahoc'];
-       // const formData = new FormData();
-        //ormData.append("file", fieldsValue['hinhanh']);
-        // Should format date value before submit.
+  
+        // const formData = new FormData();
+         //ormData.append("file", fieldsValue['hinhanh']);
+         // Should format date value before submit.
         const values = {
-          ...fieldsValue,
-          'hinhanh': {file},
-          'ngaysinh': fieldsValue['ngaysinh'].format('DD-MM-YYYY'),
-          'khoahoc': rangeValue[0].format('YYYY') +"-"+ rangeValue[1].format('YYYY')
-        };
-        console.log('Received values of form: ', values);
-        /*
-        const payload = new FormData();
-        Object.keys(values).forEach((key) => {
-          payload.append(key, values[key]);
-        });
-        postTheSVAPI(payload);
-    */  
+           ...fieldsValue,
+           'hinhanh': "ksksks",
+           'ngaysinh': fieldsValue['ngaysinh'].format('DD/MM/YYYY'),
+           'khoahoc': rangeValue[0].format('YYYY') +"-"+ rangeValue[1].format('YYYY')
+         };
+         console.log('Received values of form: ', values);
+         const payload = new FormData();
+         Object.keys(values).forEach((key) => {
+           payload.append(key, values[key]);
+         });
+         putTheSVAPI(payload);
     };
+      return(
+        <Form
+              key ={keyform}
+              form={form} 
+              enctype="multipart/form-data"
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 10}}
+          layout="horizontal"
+        
+          onFinish={onFinish}     
+        >
+          <Form.Item label="Ảnh đại diện:" name="hinhanh">
+               <input type="file" onChange={handleUpload}/>
+               <div>{file && <ImageThumb image={file} />}</div>
+          </Form.Item>
+          <Form.Item label="* Mã số Sinh Viên:" name="mssv">
+            <Input type="text" disabled/>
+          </Form.Item>
+          <Form.Item label="Họ Tên Sinh Viên:" name="ten">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Giới Tính" name="gioitinh">
+              <Radio.Group defaultValue={gt}>
+                  <Radio value="Nam">Nam</Radio>
+                   <Radio value="Nữ">Nữ</Radio>
+              </Radio.Group>
+          </Form.Item>
+          <Form.Item name="ngaysinh" label="Ngày Sinh:" {...config}>
+            <DatePicker placeholder="Ngày Sinh"  defaultValue={moment(ngaysinh, dateFormat)} format={dateFormat}/>
+          </Form.Item>
+          <Form.Item label="Lớp:" name="lop"
+          wrapperCol={{
+            sm: {span: 2,offset: 0 },
+          }}>
+            <Input />
+          </Form.Item>
+          <Form.Item label="Ngành:" name="nganh">
+            <Select defaultValue={nganhhoc}>
+              <Select.Option value="Công Nghệ Thông Tin">Công Nghệ Thông Tin</Select.Option>
+              <Select.Option value="Kiến Trúc">Kiến Trúc</Select.Option>
+              <Select.Option value="Kế Toán">Kế Toán</Select.Option>
+              <Select.Option value="Ngôn ngữ Anh">Ngôn ngữ Anh</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="Khoa:" name="khoa"  wrapperCol={{
+              xs: { span: 5, offset: 0 },
+            sm: {span: 3,offset: 0 },
+          }}>
+            <Select defaultValue={khoa}>
+              <Select.Option value="Công Nghệ">Công Nghệ</Select.Option>
+              <Select.Option value="Kiến Trúc">Kiến Trúc</Select.Option>
+              <Select.Option value="Kế Toán">Kế Toán</Select.Option>
+              <Select.Option value="Ngoại Ngữ">Ngoại Ngữ</Select.Option>
+            </Select>
+          </Form.Item>   
+             
+          <Form.Item name="khoahoc" label="Khóa:" {...rangeConfig}>
+          <RangePicker picker="year"/>
+           </Form.Item>
+           <Form.Item
+          wrapperCol={{
+              xs: { span: 20, offset: 0 },
+            sm: { span: 10, offset: 4 },
+          }}
+        >
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+        </Form>
+      )
+    } 
+
     return (
+      
         <div>
-            
-            <div style={{boder:"3vh-solid-green",padding:"3px",height:"10vh"}}>
+        
+          <div style={{boder:"3vh-solid-green",padding:"3px",height:"10vh"}}>
             <Title level={2} style={{marginLeft:"30vh"}}>CẬP NHẬT THẺ{id}</Title>
-            </div>
-            <Form
-            form={form} 
-            enctype="multipart/form-data"
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 10}}
-        layout="horizontal" 
-        onFinish={onFinish}     
-      >
-        <Form.Item label="Ảnh đại diện:" name="hinhanh">
-             <input type="file" onChange={handleUpload}/>
-             <div>{file && <ImageThumb image={file} />}</div>
-        </Form.Item>
-        <Form.Item label="* Mã số Sinh Viên:" name="mssv">
-          <Input type="text"/>
-        </Form.Item>
-        <Form.Item label="Họ Tên Sinh Viên:" name="ten">
-          <Input />
-        </Form.Item>
-        <Form.Item label="Giới Tính" name="gioitinh">
-            <Radio.Group defaultValue={""+listSV.map(list => list.gioitinh)+""}>
-                <Radio value={"Nam"}>Nam</Radio>
-                 <Radio value={"Nữ"}>Nữ</Radio>
-            </Radio.Group>
-        </Form.Item>
-        <Form.Item name="ngaysinh" label="Ngày Sinh:" {...config}>
-          <DatePicker placeholder="Ngày Sinh"/>
-        </Form.Item>
-        <Form.Item label="Lớp:" name="lop"
-        wrapperCol={{
-          sm: {span: 2,offset: 0 },
-        }}>
-          <Input />
-        </Form.Item>
-        <Form.Item label="Ngành:" name="nganh">
-          <Select>
-            <Select.Option value="Công Nghệ Thông Tin">Công Nghệ Thông Tin</Select.Option>
-            <Select.Option value="Kiến Trúc">Kiến Trúc</Select.Option>
-            <Select.Option value="Kế Toán">Kế Toán</Select.Option>
-            <Select.Option value="Ngôn ngữ Anh">Ngôn ngữ Anh</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item label="Khoa:" name="khoa"  wrapperCol={{
-            xs: { span: 5, offset: 0 },
-          sm: {span: 3,offset: 0 },
-        }}>
-          <Select>
-            <Select.Option value="Công Nghệ">Công Nghệ</Select.Option>
-            <Select.Option value="Kiến Trúc">Kiến Trúc</Select.Option>
-            <Select.Option value="Kế Toán">Kế Toán</Select.Option>
-            <Select.Option value="Ngoại Ngữ">Ngoại Ngữ</Select.Option>
-          </Select>
-        </Form.Item>      
-        <Form.Item name="khoahoc" label="Khóa:" {...rangeConfig}>
-        <RangePicker picker="year" placeholder={["Bắt Đầu","Kết Thúc"]}/>
-         </Form.Item>
-         <Form.Item
-        wrapperCol={{
-            xs: { span: 20, offset: 0 },
-          sm: { span: 10, offset: 4 },
-        }}
-      >
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-      </Form>
+           {macdinhForm()}
+           
         </div>
+      </div>
     )
+ 
 }
 
 export default FormUpdate;
