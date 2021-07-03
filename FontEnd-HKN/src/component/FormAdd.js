@@ -175,7 +175,7 @@ function FormAdd() {
   }
  
   return (
-    <div>
+    <div style={{marginLeft:"30vh" ,marginTop:"2vh"}}>
 
       <div style={{ boder: "3vh-solid-green", padding: "3px", height: "10vh" }}>
         <Title level={2} style={{ marginLeft: "30vh" }}>THÊM THẺ SINH VIÊN</Title>

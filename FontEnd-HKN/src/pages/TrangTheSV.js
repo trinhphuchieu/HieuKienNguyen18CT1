@@ -23,17 +23,14 @@ import{
   Route,
   Link,
   useParams,
-  useHistory,
   useRouteMatch
 } from "react-router-dom"
 
 
-function TrangChu() {
-  let history = useHistory();
+function TrangTheSV() {
+
   let { path,url } = useRouteMatch();
-  function handleClick() {
-    history.push("/trangchu");
-  }
+
   let {idpath} = useParams();
   const { Header, Footer, Sider } = Layout;
   const { SubMenu } = Menu;
@@ -46,10 +43,10 @@ function TrangChu() {
           <div className="logo" />
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
             <Menu.Item key="1" icon={<PieChartOutlined />}>
-            <Link to="/trangchu" > Trang Chủ</Link>
+            <Link to="/trangchu"> Trang Chủ</Link>
             </Menu.Item>
             <Menu.Item key="2" icon={<DesktopOutlined />}>
-            <Link to={`${url}/danhsachsv`}>Trang Sinh Viên</Link>
+            <Link to={`${url}/danhsachtsv`}>Thẻ Sinh Viên</Link>
             </Menu.Item>
             <SubMenu key="sub1" icon={<UserOutlined />} title="Đăng Nhập">
               <Menu.Item key="3"><Link to={`${url}/dangnhap`}>Đăng Nhập</Link></Menu.Item>
@@ -61,9 +58,9 @@ function TrangChu() {
               <Menu.Item key="8"><Link to ={`${url}/xoatsv`}>Xóa Thẻ</Link></Menu.Item>
             </SubMenu>
             <SubMenu key="9" icon={<TeamOutlined />} title="Quản Lí Sinh Viên">
-             <Menu.Item key="9" ><Link to ={`${url}/themsv`}>Thêm Sinh Viên</Link> </Menu.Item>
-              <Menu.Item key="10"><Link to ={`${url}/suasv`}>Cập Nhật</Link></Menu.Item>
-              <Menu.Item key="11" ><Link to ={`${url}/xoatsv`}>Xóa Sinh Viên</Link></Menu.Item>
+             <Menu.Item key="9" ><Link to ={`${url}/themsinhvien`}>Thêm Sinh Viên</Link> </Menu.Item>
+              <Menu.Item key="10"><Link to ={`${url}/suasinhvien`}>Cập Nhật</Link></Menu.Item>
+              <Menu.Item key="11"><Link to ={`${url}/capnhatsinhvien`}>Xóa Sinh Viên</Link></Menu.Item>
             </SubMenu>
            
           </Menu>
@@ -73,27 +70,33 @@ function TrangChu() {
           marginLeft:"3vh",
           padding:"0",
         }}> 
+        <Switch>
+        <Route path={`${url}/suatsv`}><FormUp/></Route>
+        <Route path={`${url}/xoatsv`}><FormDel/></Route>
+      
+          </Switch> 
           </div>
-          
-          <Switch>   
+          <div style ={{
+          marginLeft:"30vh",
+          padding:"0",
+        }}> 
+          <Switch>
           <Route path={`${url}/capnhattsv/:id`}><FormUpdate/></Route> 
           <Route path={`${url}/dangky`}><FormRegister/></Route> 
           <Route path={`${url}/dangnhap`}><FormLogin/></Route>  
           <Route path={`${url}/xemtsv/:id`}><FormDetail/></Route> 
-          <Route path={`${url}/themtsv`}><FormAdd/></Route>     
-          <Route path={`${url}/suatsv`}><FormUp/></Route>
-          <Route path={`${url}/xoatsv`}><FormDel/></Route>
-          <Route path={`${url}/danhsachsv`}></Route>  
-          <Route path={`${url}/themsv`}></Route>
-          <Route path={`${url}/suasv`}></Route>
-          <Route path={`${url}/xoasv`}></Route> 
-          <Route path={`/trangchu`}><FormShow/></Route>  
-           
+          <Route path={`${url}/themtsv`}><FormAdd/></Route>
+          <Route exact path="/trangchu"><FormAdd/></Route>
           </Switch>
-         
-        
-        
-    
+          </div>
+          <div style ={{
+          marginLeft:"20vh",
+          padding:"0",
+        }}> 
+        <Switch>
+        <Route path={`${url}/danhsachtsv`}><FormShow/></Route> 
+        </Switch>
+         </div>
         </Layout>
         
       </Layout>
@@ -103,5 +106,4 @@ function TrangChu() {
   )
 }
 
-export default TrangChu;
-//      style={{marginLeft:"20vh"}}
+export default TrangTheSV;

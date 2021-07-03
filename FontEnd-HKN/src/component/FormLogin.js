@@ -10,7 +10,7 @@ function FormLogin() {
           console.log('Failed:', errorInfo);
         };
     return (
-        <div>
+        <div  style={{marginLeft:"30vh"}}>
           <div style={{boder:"3vh-solid-green",padding:"3px",height:"10vh",marginTop:"10vh"}}>
             <Title level={2} style={{marginLeft:"40vh"}}>ĐĂNG NHẬP</Title>
             </div>

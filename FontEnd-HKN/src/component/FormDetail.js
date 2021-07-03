@@ -18,7 +18,7 @@ import {
 import axios from "axios";
 
 
-function FormUpdate() {
+function FormDetail() {
   const [file, setFile] = React.useState("");
   const [file1, setFile1] = useState({});
 
@@ -27,10 +27,7 @@ function FormUpdate() {
     const url = "http://localhost:5000/api/capnhattsv/" + id;
     return axios.get(url);
   };
-  const putTheSVAPI = (data) => {
-    const url = "http://localhost:5000/api/capnhattsv/" + id;
-    return axios.put(url, data);
-  };
+
   const getImages = () => {
     const url = "http://localhost:5000/api/anhthe/" +id;
     return axios.get(url);
@@ -114,7 +111,7 @@ function FormUpdate() {
   let hinhanh = JSON.stringify(listSV.map(list => list.hinhanh));
   hinhanh = hinhanh.slice(2, -2)
   console.log(getImages()); 
-
+  const [file2, setFile2] = useState();
   const [state, setState] = useState({source: null});
   function componentDidMount(){
     axios
@@ -123,7 +120,7 @@ function FormUpdate() {
         { responseType: 'arraybuffer' },
       )
       .then(response => {
-    
+        setFile2() 
           
         const base64 = btoa(
           new Uint8Array(response.data).reduce(
@@ -147,6 +144,7 @@ function FormUpdate() {
   // Handles file upload event and updates state
   function handleUpload(event) {
     setFile(event.target.files[0]);
+
     // Add code here to upload file to server
     // ...
   }
@@ -181,26 +179,8 @@ function FormUpdate() {
 
   // form cần key
   const macdinhForm = () => {
-
-    const onFinish = (fieldsValue) => {
-      const rangeValue = fieldsValue['khoahoc'];
-
-      // const formData = new FormData();
-      //ormData.append("file", fieldsValue['hinhanh']);
-      // Should format date value before submit.
-      const values = {
-        ...fieldsValue,
-        'hinhanh': file,
-        'ngaysinh': fieldsValue['ngaysinh'].format('DD/MM/YYYY'),
-        'khoahoc': rangeValue[0].format('YYYY') + "-" + rangeValue[1].format('YYYY')
-      };
-      console.log('Received values of form: ', values);
-      const payload = new FormData();
-      Object.keys(values).forEach((key) => {
-        payload.append(key, values[key]);
-      });
-      putTheSVAPI(payload);
-    };
+    
+ 
     return (
       <Form
         key={keyform}
@@ -210,21 +190,20 @@ function FormUpdate() {
         wrapperCol={{ span: 10 }}
         layout="horizontal"
 
-        onFinish={onFinish}
+       
       >
         <Form.Item label="Ảnh đại diện:" name="hinhanh">
-          <input type="file" onChange={handleUpload} />
           <div >{file && <ImageThumb image={file} />}
           <img className="image-upload" src={state.source} /></div>
         </Form.Item>
         <Form.Item label="* Mã số Sinh Viên:" name="mssv">
-          <Input type="text" disabled />
+          <Input type="text"  />
         </Form.Item>
         <Form.Item label="Họ Tên Sinh Viên:" name="ten">
-          <Input />
+          <Input autoComplete="off" />
         </Form.Item>
         <Form.Item label="Giới Tính" name="gioitinh">
-          <Radio.Group defaultValue={gt}>
+          <Radio.Group defaultValue={gt} >
             <Radio value="Nam">Nam</Radio>
             <Radio value="Nữ">Nữ</Radio>
           </Radio.Group>
@@ -261,31 +240,21 @@ function FormUpdate() {
         <Form.Item name="khoahoc" label="Khóa:" {...rangeConfig}>
           <RangePicker picker="year" />
         </Form.Item>
-        <Form.Item
-          wrapperCol={{
-            xs: { span: 20, offset: 0 },
-            sm: { span: 10, offset: 4 },
-          }}
-        >
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
       </Form>
     )
   }
 
   return (
 
-    <div>
+    <div style={{ marginTop:"2vh",marginLeft:"30vh"}}>
       <div style={{ boder: "3vh-solid-green", padding: "3px", height: "10vh" }}>
-        <Title level={2} style={{ marginLeft: "30vh" }}>CẬP NHẬT THẺ{id}</Title>
+        <Title level={2} style={{ marginLeft: "30vh" }}>Thẻ Sinh Viên</Title>
         {macdinhForm()}
 
       </div>
     </div>
   )
-
+ 
 }
 
-export default FormUpdate;
+export default FormDetail;

@@ -1,6 +1,6 @@
 import sqlite3
 from ..models import TheSV_models
-
+from flask.helpers import send_file
 
 
 class TheSVActions:
@@ -100,6 +100,32 @@ class TheSVActions:
                 nganh = row[6],
                 khoa = row[7],
                 khoahoc= row[8],
-                hinhanh = row[9]
+                hinhanh = row[9],
             )
         return thesv
+
+    def LayAnh(self,id:int):
+        conn =sqlite3.connect(self.db_connection)
+        cursor = conn.cursor()
+        sql ="""
+        SELECT hinhanh FROM TheSinhVien WHERE id = ?
+        """
+        cursor.execute(sql,(id,))    
+        row = cursor.fetchone()
+        cursor.close()
+        if row == None:
+            return 'Sai ID thẻ ',404
+        hinhanh = row[0]
+        return hinhanh
+
+
+    def LayTenAnh(self,id:int):
+        conn = sqlite3.connect(self.db_connection)
+        cursor = conn.cursor()
+        sql = """
+        SELECT hinhanh FROM TheSinhVien WHERE id =?
+        """
+        cursor.execute(sql, (id,))
+        row = cursor.fetchone()
+        cursor.close()  
+        return row[0]

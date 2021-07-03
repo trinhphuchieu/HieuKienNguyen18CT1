@@ -1,27 +1,31 @@
 
 import './App.css';
-import 'antd/dist/antd.css'; 
+import 'antd/dist/antd.css';
 import axios from "axios";
-import{
+
+
+import {
   BrowserRouter as Router,
   Switch,
+  useHistory,
 
-  Route 
+  Route
 } from "react-router-dom"
 import TrangChu from './pages/TrangChu';
-
+import TrangTheSV from './pages/TrangTheSV';
 function App() {
-
+  
   return (
-   <Router>
-     <Switch>
-      
-       <Route path = "/trangchu">
-       <TrangChu/>
-       </Route>
-     </Switch>
-   </Router>
-    
+    <div>
+      <Router>
+        <Switch>   
+          <Route path="/trangchu">
+          <TrangChu />
+          </Route>    
+        </Switch>
+      </Router>
+    </div>
+
   );
 }
 

@@ -99,7 +99,7 @@ function onUpdate(id){
 }
 
     return (
-        <div style={{ marginTop:"20px"}}>
+        <div style={{ marginTop:"5vh",marginLeft:"5vh"}}>
         <Row>
           <Col span={30}>
             <Table dataSource={listSV} columns={columns} pagination={false}/>
