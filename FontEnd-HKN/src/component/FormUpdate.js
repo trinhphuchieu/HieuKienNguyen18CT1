@@ -95,22 +95,7 @@ function FormUpdate() {
       console.log("Request lỗi: ", e);
     }
   }
-  async function getAnh() {
-    try {
-      const result = await getImages();
-      if (result.status === 200) {
-        /*
-        const datas = result.data.map((item) => ({
-          ...item,
-        }));
-        
-        setFile(datas);
-        */
-      }
-    } catch (e) {
-      console.log("Request lỗi: ", e);
-    }
-  }
+ 
   let hinhanh = JSON.stringify(listSV.map(list => list.hinhanh));
   hinhanh = hinhanh.slice(2, -2)
   console.log(getImages()); 
@@ -277,9 +262,9 @@ function FormUpdate() {
 
   return (
 
-    <div>
+    <div style={{marginLeft:"30vh" ,marginTop:"2vh"}}>
       <div style={{ boder: "3vh-solid-green", padding: "3px", height: "10vh" }}>
-        <Title level={2} style={{ marginLeft: "30vh" }}>CẬP NHẬT THẺ{id}</Title>
+        <Title level={2} style={{ marginLeft: "30vh" }}>CẬP NHẬT THẺ</Title>
         {macdinhForm()}
 
       </div>

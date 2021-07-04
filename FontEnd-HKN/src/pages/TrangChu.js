@@ -1,4 +1,5 @@
 import React, {  } from 'react'
+import ReactDOM from 'react-dom';
 import { Layout, Menu} from 'antd';
 import FormLogin from '../component/FormLogin';
 import FormAdd from '../component/FormAdd';
@@ -9,6 +10,8 @@ import FormDel from '../component/FormDel';
 import FormUpdate from '../component/FormUpdate';
 import FormDetail from '../component/FormDetail';
 import ShowStudent from '../componentSV/ShowStudent';
+import AddStudent from '../componentSV/AddStudent';
+import UpStudent from '../componentSV/UpStudent';
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -63,7 +66,7 @@ function TrangChu() {
             <SubMenu key="9" icon={<TeamOutlined />} title="Quản Lí Sinh Viên">
              <Menu.Item key="9" ><Link to ={`${url}/themsv`}>Thêm Sinh Viên</Link> </Menu.Item>
               <Menu.Item key="10"><Link to ={`${url}/suasv`}>Cập Nhật</Link></Menu.Item>
-              <Menu.Item key="11" ><Link to ={`${url}/xoatsv`}>Xóa Sinh Viên</Link></Menu.Item>
+           
             </SubMenu>
            
           </Menu>
@@ -83,10 +86,9 @@ function TrangChu() {
           <Route path={`${url}/themtsv`}><FormAdd/></Route>     
           <Route path={`${url}/suatsv`}><FormUp/></Route>
           <Route path={`${url}/xoatsv`}><FormDel/></Route>
-          <Route path={`${url}/danhsachsv`}></Route>  
-          <Route path={`${url}/themsv`}></Route>
-          <Route path={`${url}/suasv`}></Route>
-          <Route path={`${url}/xoasv`}></Route> 
+          <Route path={`${url}/danhsachsv`}><ShowStudent/></Route>  
+          <Route path={`${url}/themsv`}><AddStudent/></Route>
+          <Route path={`${url}/suasv`}><UpStudent/></Route>
           <Route path={`/trangchu`}><FormShow/></Route>  
            
           </Switch>

@@ -1,5 +1,6 @@
 import React,{useState,useEffect} from 'react'
 import { Table, Input, Button, Space } from 'antd';
+import {Link} from "react-router-dom"
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import axios from 'axios';
@@ -9,7 +10,7 @@ const getDataAPI = () => {
   }
 
    
-function ShowStudent() {
+function UpStudent() {
     const [listSV, setListSV] = useState([]);
     
     async function getSV() {
@@ -18,7 +19,7 @@ function ShowStudent() {
         if (result.status === 200) {
           const datas = result.data.map((item) => ({
             ...item,
-            key: item.id,
+            key: item.mssv,
   
           }));
   
@@ -107,24 +108,32 @@ function ShowStudent() {
     
       const columns = [
         {
+            title: 'Mã Sinh Viên',
+            dataIndex: 'mssv',
+            key: 'mssv',
+            
+            ...getColumnSearchProps('mssv'),
+          },
+        {
           title: 'Tên',
           dataIndex: 'ten',
           key: 'ten',
-          width: '25%',
+          
           ...getColumnSearchProps('ten'),
         },
         {
           title: 'Địa Chỉ',
           dataIndex: 'diachi',
+          width: "20%",
           key: 'diachi',
-          width: '30%',
+          
           ...getColumnSearchProps('diachi'),
         },
         {
           title: 'Số Điện Thoại',
           dataIndex: 'sodienthoai',
           key: 'sodienthoai',
-          width: '15%',
+         
           ...getColumnSearchProps('sodienthoai'),
         },
         {
@@ -139,14 +148,41 @@ function ShowStudent() {
           key: 'noisinh',
           ...getColumnSearchProps('noisinh'),
         },
-        
+        {
+            title: "Cập Nhật",
+            key: "capnhat",
+            width:"108px",
+            render: (text, record) => (
+             
+              <Button
+                type="primary"      
+              >
+               <Link to ={"/trangchu/xoasv/"+record.mssv} >Cập Nhật</Link>
+              </Button>
+            ),
+          },
+          {
+            title: "Xóa",
+            key: "xoa",
+            width:"100px",
+            render: (text, record) => (
+             
+              <Button
+                
+                type="primary"
+                danger
+              >
+               <Link to ={"/trangchu/capnhatsv/"+record.mssv} >Xóa</Link>
+              </Button>
+            ),
+          },
       ];
     
     return (
         <div>       
-        <Table columns={columns} dataSource={listSV} scroll={{ y:800 }}  pagination={false} />
+        <Table columns={columns} dataSource={listSV} scroll={{ y:600}}  pagination={false} />
         </div>
     )
 }
 
-export default ShowStudent
+export default UpStudent

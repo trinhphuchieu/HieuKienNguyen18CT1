@@ -36,9 +36,14 @@ def DanhSachThe():
 #-------------------- Danh Sach Thẻ -------------------------------------
 @app.route('/api/themtsv',methods=['POST'])
 def NhanThe(): 
-    hinhanh = request.files['hinhanh']
-    filename = str(int(time()))+'.jpg'
-    hinhanh.save(f'uploads/{filename}')
+    file = ""     
+    if not request.files.get('hinhanh', None):  
+        file = ""
+    else:
+        hinhanh = request.files['hinhanh']
+        file = str(int(time()))+'.jpg'
+        hinhanh.save(f'uploads\{file}') 
+
     mssv = request.form['mssv']
     ten = request.form['ten']
     gioitinh = request.form['gioitinh']
@@ -47,7 +52,7 @@ def NhanThe():
     nganh = request.form['nganh']
     khoa = request.form['khoa']
     khoahoc = request.form['khoahoc']
-    thesv = TheSV(mssv= mssv,ten=ten,gioitinh=gioitinh,ngaysinh=ngaysinh,lop=lop,nganh=nganh,khoa=khoa,khoahoc=khoahoc,hinhanh=filename)
+    thesv = TheSV(mssv= mssv,ten=ten,gioitinh=gioitinh,ngaysinh=ngaysinh,lop=lop,nganh=nganh,khoa=khoa,khoahoc=khoahoc,hinhanh=file)
     TheSV_Actions = TheSVActions(connect_data)
     result = TheSV_Actions.ThemTheSV(thesv)
     
@@ -87,7 +92,7 @@ def CapNhatThe(id):
         else:
             hinhanh = request.files['hinhanh']
             nhanvat = str(int(time()))+'.jpg'
-            hinhanh.save(f'uploads/{nhanvat}') 
+            hinhanh.save(f'uploads\{nhanvat}') 
               
         ten = request.form['ten']
         gioitinh = request.form['gioitinh']

@@ -116,14 +116,4 @@ class SVActions:
         )
         return SinhVien
 
-    def LayTenAnh(self, mssv: int):
-        conn = sqlite3.connect(self.db_connection)
-        cursor = conn.cursor()
-        sql = """
-        SELECT hinhanh FROM SinhVien WHERE mssv = ?
-        """
-        cursor.execute(sql, (mssv,))
-        row = cursor.fetchone()
-        cursor.close()  
-        return row[8]
 
