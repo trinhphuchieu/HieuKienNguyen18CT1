@@ -21,14 +21,10 @@ function FormShow() {
     try {
       const result = await getDataAPI();
       if (result.status === 200) {
-        const datas = result.data.map((item) => ({
-          ...item,
-          key: item.id,
-
-        }));
-
-        setListSV(datas);
-
+        
+        const value = Object.values(result.data);
+        setListSV(value);
+        console.log(listSV)
       }
     } catch (e) {
       console.log("Request lỗi: ", e);

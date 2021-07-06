@@ -10,7 +10,16 @@ from .actions.TheSV_actions import TheSVActions
 from .actions.SV_actions import SVActions
 from .models.TheSV_models import TheSV
 from .models.SinhVien_models import SinhVien
+from .models.Login_models import Login
+from .actions.Login_actions import LoginActions
 from time import time
+
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+
+
 import os
 #  flask và sqlite
 app = Flask(__name__)
@@ -18,9 +27,12 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 CORS(app)
 connect_data = './db.sqlite3'
 
+#ma hoa token
+app.config['JWT_SECRET_KEY'] = "hieukute"
+jwt = JWTManager(app)
+
 
 @app.route('/')
-
 def home():
     return 'Hello Word'
 
@@ -109,7 +121,7 @@ def CapNhatThe(id):
         response.content_type="application/json"
         return response
 
-@app.route('/api/anhthe/<int:id>')
+@app.route('/api/anhthe/<int:id>', methods=['GET'])
 def AnhSV(id):
     TheSV_Actions = TheSVActions(connect_data)
     return send_file(f'uploads\{TheSV_Actions.LayAnh(id)}',mimetype='image/jpeg')
@@ -144,7 +156,7 @@ def XoaSV(mssv):
     return response
 
 
-# -------------------- API Cap Nhat  Sinh Vien-------------------
+# -------------------- API Them Sinh Vien-------------------
 
 
 
@@ -166,6 +178,7 @@ def NhanSinhVien():
     response.content_type = "application/json"
     return response
 
+# -------------------- API Cap Nhat  Sinh Vien -------------------
 
 @app.route('/api/capnhatsv/<int:mssv>', methods=['PUT', 'GET'])
 def CapNhatSV(mssv):
@@ -189,3 +202,68 @@ def CapNhatSV(mssv):
         response.headers.add("Access-Control-Allow-Origin", "*")
         response.content_type = "application/json"
         return response    
+
+# -------------------- API Lay MSSV -------------------
+@app.route('/api/mssv', methods=['GET'])
+def LayMaSV():
+    SinhVien_Actions = SVActions(connect_data)
+    result = SinhVien_Actions.LayMSSV()
+    return jsonify(result)
+
+
+#----------------------------------ĐĂNG NHẬP -----------------------------------
+
+@app.route('/api/dangnhap', methods=['POST'])
+def login():
+
+    username = request.form['taikhoan']
+    password = request.form['matkhau']
+    if username == None or password is None:
+        return jsonify({
+            'message': 'Sai tài khoản hoặc mật khẩu'
+        }), 400
+    
+    Login_Actions = LoginActions(connect_data)
+    result, status_code =  Login_Actions.DangNhap(Login(taikhoan=username, matkhau=password))
+    res = {
+        "value" : result,
+        "status_code" : status_code
+    }
+    if status_code != 200:
+        return json.dumps(res)
+    # Luu thong tin user vao token
+    access_token = create_access_token(identity=result.serialize())
+    res = {
+        "value" : "ok",
+        "status_code" : 200,
+        'token': access_token
+    }
+    return json.dumps(res)
+
+@app.route('/api/dangky', methods=['POST'])
+def dangkytaikhoan():
+
+    username = request.form['taikhoan']
+    password = request.form['matkhau']
+    vaitro = "admin"
+    if username == None or password is None:
+        return jsonify({
+            'message': 'Sai tài khoản hoặc mật khẩu'
+        }), 400
+    
+    Login_Actions = LoginActions(connect_data)
+    result, status_code =  Login_Actions.DangKy(Login(taikhoan=username, matkhau=password,vaitro=vaitro))
+    res = {
+        "value" : result,
+        "status_code" : status_code
+    }
+    if status_code != 200:
+        return json.dumps(res)
+
+    response = make_response(jsonify({"message": "success"}), 201)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.content_type = "application/json"
+    return response   
+
+
+

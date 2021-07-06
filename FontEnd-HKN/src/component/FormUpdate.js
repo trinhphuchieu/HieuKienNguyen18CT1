@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+
+import React, { useState, useEffect,setState } from 'react'
 import {
   Form,
   Input,
@@ -6,8 +7,10 @@ import {
   Radio,
   Select,
   Typography,
-  DatePicker
+  DatePicker,
+  Modal
 } from 'antd';
+import { Alert } from 'antd';
 import '../StyleForm.css';
 import moment from 'moment';
 import {
@@ -16,7 +19,16 @@ import {
 } from "react-router-dom";
 
 import axios from "axios";
+const apiURL = "http://localhost:5000"
 
+axios
+  .get(apiURL)
+  .then((response) => {
+    setState(response.message);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 
 function FormUpdate() {
   const [file, setFile] = React.useState("");
@@ -70,8 +82,9 @@ function FormUpdate() {
   //-------------------------------mac dinh gia tri
 
   form.setFieldsValue({
-    'gioitinh': "Nam",
+    'gioitinh': gt,
     'nganh': nganhhoc,
+    'khoa': khoa,
     'ngaysinh': moment(ngaysinh, dateFormat),
     'khoahoc': [moment(khoahoc2[0], dateFormat1), moment(khoahoc2[1], dateFormat1)]
   })
@@ -95,12 +108,11 @@ function FormUpdate() {
       console.log("Request lỗi: ", e);
     }
   }
- 
+
   let hinhanh = JSON.stringify(listSV.map(list => list.hinhanh));
   hinhanh = hinhanh.slice(2, -2)
-  console.log(getImages()); 
-
-  const [state, setState] = useState({source: null});
+  
+  const [anh, anh1] = useState({source: null});
   function componentDidMount(){
     axios
       .get(
@@ -117,29 +129,36 @@ function FormUpdate() {
           ),
         );
          
-        setState({ source: "data:;base64," + base64 });
+        anh1({ source: "data:;base64," + base64 });
       });
   }
+
+  const ImageThumb = ({image}) => {
+    return <img className="image-upload" src={ URL.createObjectURL(image)} alt={image.name} />;  
+}
+
+  function handleUpload(event) {
+    setFile(event.target.files[0]);
+
+    // Add code here to upload file to server
+    // ...
+  }
+
+ 
   useEffect(() => {
     getSV();
-    componentDidMount()
+    componentDidMount();
+   
   }, []);
- 
+
   //{listSV.map(list => list.mssv)} lấy giá trị trong list
   // UPPPLOADIMAGE------------------
 
 
   // Handles file upload event and updates state
-  function handleUpload(event) {
-    setFile(event.target.files[0]);
-    // Add code here to upload file to server
-    // ...
-  }
 
-  const ImageThumb = ({ image }) => {
-    
-    return <img className="image-upload" src={URL.createObjectURL(image)} alt={image.name} />;
-  };
+
+ 
   //------------------------------------format form giao diện
   const config = {
     rules: [
@@ -159,20 +178,52 @@ function FormUpdate() {
     ],
   };
 
-
-
+  
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const { Title } = Typography;
   const { RangePicker } = DatePicker;
-
+  
   // form cần key
+  const [tb,settb] = useState(false);
+
   const macdinhForm = () => {
 
+
+    function countDown() {
+      let secondsToGo = 3;
+      const modal = Modal.success({
+        title: 'Xử Lý Thành Công!',
+        content: `Đang Chuyển Trang......`,
+      });
+     
+      const timer = setInterval(() => {
+        secondsToGo -= 1;
+        modal.update({
+          content: `Vui Lòng Chờ  ${secondsToGo} giây.`,
+          okText: `Hủy`,
+        });
+      }, 1000);
+      setTimeout(() => {
+        clearInterval(timer);
+        window.location.href = 'http://localhost:3000/trangchu/suatsv/'
+      }, secondsToGo * 1000);
+    }
+    const handleOk = () => {
+      countDown();
+      setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+      setIsModalVisible(false);
+  };
+
     const onFinish = (fieldsValue) => {
+      
+      setIsModalVisible(true);
+
       const rangeValue = fieldsValue['khoahoc'];
 
-      // const formData = new FormData();
-      //ormData.append("file", fieldsValue['hinhanh']);
-      // Should format date value before submit.
+    
       const values = {
         ...fieldsValue,
         'hinhanh': file,
@@ -184,9 +235,17 @@ function FormUpdate() {
       Object.keys(values).forEach((key) => {
         payload.append(key, values[key]);
       });
-      putTheSVAPI(payload);
+      putTheSVAPI(payload); 
+     
     };
+   
+ 
+    
+ // <img className="image-upload" src={state.source} />
+ //{file && <ImageThumb image={file} />}
     return (
+      <div>
+        
       <Form
         key={keyform}
         form={form}
@@ -194,13 +253,16 @@ function FormUpdate() {
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 10 }}
         layout="horizontal"
-
         onFinish={onFinish}
+       
       >
         <Form.Item label="Ảnh đại diện:" name="hinhanh">
-          <input type="file" onChange={handleUpload} />
-          <div >{file && <ImageThumb image={file} />}
-          <img className="image-upload" src={state.source} /></div>
+          <input type="file" onChange={handleUpload} /> 
+          <div className="container">
+          <div className="box"><img className="image-upload " src={anh.source}/></div>
+          <div className="box overlay"> {file && <ImageThumb image={file} />}</div>
+         </div>
+         
         </Form.Item>
         <Form.Item label="* Mã số Sinh Viên:" name="mssv">
           <Input type="text" disabled />
@@ -209,13 +271,13 @@ function FormUpdate() {
           <Input />
         </Form.Item>
         <Form.Item label="Giới Tính" name="gioitinh">
-          <Radio.Group defaultValue={gt}>
+          <Radio.Group >
             <Radio value="Nam">Nam</Radio>
             <Radio value="Nữ">Nữ</Radio>
           </Radio.Group>
         </Form.Item>
         <Form.Item name="ngaysinh" label="Ngày Sinh:" {...config}>
-          <DatePicker placeholder="Ngày Sinh" defaultValue={moment(ngaysinh, dateFormat)} format={dateFormat} />
+          <DatePicker placeholder="Ngày Sinh"  format={dateFormat} />
         </Form.Item>
         <Form.Item label="Lớp:" name="lop"
           wrapperCol={{
@@ -224,7 +286,7 @@ function FormUpdate() {
           <Input />
         </Form.Item>
         <Form.Item label="Ngành:" name="nganh">
-          <Select defaultValue={nganhhoc}>
+          <Select >
             <Select.Option value="Công Nghệ Thông Tin">Công Nghệ Thông Tin</Select.Option>
             <Select.Option value="Kiến Trúc">Kiến Trúc</Select.Option>
             <Select.Option value="Kế Toán">Kế Toán</Select.Option>
@@ -235,7 +297,7 @@ function FormUpdate() {
           xs: { span: 5, offset: 0 },
           sm: { span: 3, offset: 0 },
         }}>
-          <Select defaultValue={khoa}>
+          <Select >
             <Select.Option value="Công Nghệ">Công Nghệ</Select.Option>
             <Select.Option value="Kiến Trúc">Kiến Trúc</Select.Option>
             <Select.Option value="Kế Toán">Kế Toán</Select.Option>
@@ -252,19 +314,27 @@ function FormUpdate() {
             sm: { span: 10, offset: 4 },
           }}
         >
-          <Button type="primary" htmlType="submit">
-            Submit
+ 
+          <Button type="primary" htmlType="submit" >
+            Gửi
           </Button>
+
         </Form.Item>
       </Form>
+      <Modal  title="Bạn có muốn Cập Nhật Thẻ Sinh Viên?" cancelText="Hủy" okText="Đồng ý"visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} >
+      </Modal>
+      </div>
     )
+    
   }
+ 
 
   return (
 
     <div style={{marginLeft:"30vh" ,marginTop:"2vh"}}>
       <div style={{ boder: "3vh-solid-green", padding: "3px", height: "10vh" }}>
         <Title level={2} style={{ marginLeft: "30vh" }}>CẬP NHẬT THẺ</Title>
+        
         {macdinhForm()}
 
       </div>

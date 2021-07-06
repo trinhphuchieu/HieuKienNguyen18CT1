@@ -1,6 +1,6 @@
 import React, {  } from 'react'
 import ReactDOM from 'react-dom';
-import { Layout, Menu} from 'antd';
+import { Layout, Menu,createContext,useContext,useState} from 'antd';
 import FormLogin from '../component/FormLogin';
 import FormAdd from '../component/FormAdd';
 import FormRegister from '../component/FormRegister';
@@ -12,6 +12,8 @@ import FormDetail from '../component/FormDetail';
 import ShowStudent from '../componentSV/ShowStudent';
 import AddStudent from '../componentSV/AddStudent';
 import UpStudent from '../componentSV/UpStudent';
+import ShowDetail from '../componentSV/ShowDetail';
+
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -27,16 +29,20 @@ import{
   Link,
   useParams,
   useHistory,
-  useRouteMatch
+  useRouteMatch,
+  Redirect
+
 } from "react-router-dom"
 
 
 function TrangChu() {
   let history = useHistory();
   let { path,url } = useRouteMatch();
+
   function handleClick() {
     history.push("/trangchu");
   }
+ 
   let {idpath} = useParams();
   const { Header, Footer, Sider } = Layout;
   const { SubMenu } = Menu;
@@ -58,11 +64,15 @@ function TrangChu() {
               <Menu.Item key="3"><Link to={`${url}/dangnhap`}>Đăng Nhập</Link></Menu.Item>
               <Menu.Item key="5"><Link to={`${url}/dangky`}>Đăng Ký</Link></Menu.Item>
             </SubMenu>
+           
+          
+            
             <SubMenu key="sub2" icon={<FileOutlined />} title="Quản Lí Thẻ">
              <Menu.Item key="6" ><Link to ={`${url}/themtsv`}>Thêm Thẻ</Link> </Menu.Item>
               <Menu.Item key="7"><Link to ={`${url}/suatsv`}>Cập Nhật</Link></Menu.Item>
               <Menu.Item key="8"><Link to ={`${url}/xoatsv`}>Xóa Thẻ</Link></Menu.Item>
             </SubMenu>
+            
             <SubMenu key="9" icon={<TeamOutlined />} title="Quản Lí Sinh Viên">
              <Menu.Item key="9" ><Link to ={`${url}/themsv`}>Thêm Sinh Viên</Link> </Menu.Item>
               <Menu.Item key="10"><Link to ={`${url}/suasv`}>Cập Nhật</Link></Menu.Item>
@@ -79,7 +89,8 @@ function TrangChu() {
           </div>
           
           <Switch>   
-          <Route path={`${url}/capnhattsv/:id`}><FormUpdate/></Route> 
+          <Route path={`${url}/capnhatsv/:id`}><ShowDetail/></Route> 
+          <Route path={`${url}/capnhattsv/:id`}><FormUpdate/></Route>     
           <Route path={`${url}/dangky`}><FormRegister/></Route> 
           <Route path={`${url}/dangnhap`}><FormLogin/></Route>  
           <Route path={`${url}/xemtsv/:id`}><FormDetail/></Route> 

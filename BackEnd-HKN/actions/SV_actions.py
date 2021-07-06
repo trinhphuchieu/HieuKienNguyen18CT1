@@ -91,7 +91,6 @@ class SVActions:
         
         if count == 0:
             return 'Ko tim duoc mssv update', 404
-        xoabangthe(mssv)
         return 'update Thành Công', 200
 
     # --------------XEM SINH VIÊN THEO mssv-------------------------
@@ -116,4 +115,19 @@ class SVActions:
         )
         return SinhVien
 
+    def LayMSSV(self):
+        conn = sqlite3.connect(self.db_connection)
+        cursor = conn.cursor()
+        sql = """
+        SELECT mssv FROM SinhVien
+        """
+        cursor.execute(sql)  
+        rows = cursor.fetchall()
+        cursor.close()  
+        result = []
+        for row in rows:
+            mssv=row[0]
+            result.append(mssv)
+        cursor.close()
+        return result
 

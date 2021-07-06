@@ -1,32 +1,40 @@
-
+import React, { useContext, createContext, useState } from "react";
 import './App.css';
 import 'antd/dist/antd.css';
 import axios from "axios";
-
+import { Button } from 'antd';
 
 import {
   BrowserRouter as Router,
   Switch,
+  Route,
+  Link,
+  Redirect,
   useHistory,
-
-  Route
+  useLocation
 } from "react-router-dom"
 import TrangChu from './pages/TrangChu';
-import TrangTheSV from './pages/TrangTheSV';
+
+
 function App() {
   
   return (
-    <div>
-      <Router>
-        <Switch>   
-          <Route path="/trangchu">
-          <TrangChu />
-          </Route>    
-        </Switch>
-      </Router>
-    </div>
 
+      <div >
+       <Router>
+          <Switch>      
+            <Route path="/trangchu">
+            <TrangChu />
+            </Route>     
+          </Switch>
+        </Router>
+
+      </div>
+  
   );
 }
+
+
+
 
 export default App;

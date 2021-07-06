@@ -229,7 +229,7 @@ function FormDel() {
 
   ];
   function countDown(id) {
-    let secondsToGo = 8;
+    let secondsToGo = 4;
     const modal = Modal.success({
       title: 'Vui Lòng Chờ trong giây Lát!',
       content: `Đang Xử Lý......`,
@@ -243,6 +243,7 @@ function FormDel() {
     }, 1000);
     setTimeout(() => {
       clearInterval(timer);
+      modal.destroy();
       onDelete(id);
     }, secondsToGo * 1000);
   }
